@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduAdapt – AI-Powered Learning Assistant</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f0f4ff;
+      --surface: #ffffff;
+      --border: #dde3f0;
+      --text: #1a1f2e;
+      --muted: #6b7280;
+      --accent: #1d4ed8;
+      --accent-light: #eff6ff;
+      --accent-hover: #1e40af;
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+      --granite: #0a2540;
+      --granite-mid: #1e3a5f;
+      --granite-light: #e8edf7;
+      --radius: 12px;
+      --shadow: 0 2px 16px rgba(10,37,64,0.10);
+      --shadow-lg: 0 8px 32px rgba(10,37,64,0.14);
+    }
+
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.65;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--granite) 0%, var(--granite-mid) 100%);
+      color: #fff;
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      box-shadow: 0 3px 16px rgba(0,0,0,0.25);
+      min-height: 68px;
+    }
+    .header-logo-wrap { display: flex; align-items: center; gap: 14px; }
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, #3b82f6, #60a5fa);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 2px 8px rgba(59,130,246,0.4);
+      flex-shrink: 0;
+    }
+    .logo-text .logo { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo-text .logo span { color: #60a5fa; }
+    .logo-text .tagline { font-size: 12px; color: #93c5fd; margin-top: 1px; }
+    .header-badges { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .ibm-badge {
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 11.5px;
+      color: #bfdbfe;
+      white-space: nowrap;
+    }
+    .ibm-badge.ethical {
+      background: rgba(22,163,74,0.15);
+      border-color: rgba(74,222,128,0.35);
+      color: #86efac;
+    }
+
+    /* ── Hero strip ── */
+    .hero-strip {
+      background: linear-gradient(90deg, #1e3a5f 0%, #1d4ed8 100%);
+      color: #fff;
+      text-align: center;
+      padding: 20px 24px;
+    }
+    .hero-strip h1 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+    .hero-strip p { font-size: 14px; color: #bfdbfe; max-width: 620px; margin: 0 auto; }
+    .feature-pills {
+      display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 14px;
+    }
+    .feature-pill {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.20);
+      border-radius: 99px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: #e0f2fe;
+    }
+
+    /* ── Layout ── */
+    main {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 30px 20px 70px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--granite);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-badge {
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      width: 26px; height: 26px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Form elements ── */
+    label { display: block; font-size: 13px; font-weight: 600; color: var(--muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+    input[type=text], textarea, select {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fafbfe;
+      color: var(--text);
+      transition: border-color 0.18s, box-shadow 0.18s;
+      resize: vertical;
+    }
+    input[type=text]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(29,78,216,0.10);
+    }
+    textarea { min-height: 130px; }
+
+    /* ── Proficiency selector ── */
+    .level-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 8px;
+    }
+    @media (max-width: 580px) { .level-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    .level-btn {
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      background: var(--bg);
+      transition: all 0.18s;
+      position: relative;
+    }
+    .level-btn:hover { border-color: var(--accent); background: var(--accent-light); transform: translateY(-1px); box-shadow: var(--shadow); }
+    .level-btn.active { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px rgba(29,78,216,0.12); }
+    .level-btn .level-icon { font-size: 24px; display: block; margin-bottom: 6px; }
+    .level-btn .level-name { font-weight: 700; font-size: 13px; color: var(--accent); }
+    .level-btn .level-desc { font-size: 11px; color: var(--muted); margin-top: 3px; }
+    .level-btn.active::after {
+      content: "✓";
+      position: absolute; top: 6px; right: 8px;
+      font-size: 11px; font-weight: 800; color: var(--accent);
+    }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 11px 22px;
+      border-radius: 8px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,0.25); }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(29,78,216,0.30); }
+    .btn-primary:disabled { background: #93c5fd; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-secondary { background: var(--granite-light); color: var(--granite); border: 1px solid #c7d2e8; }
+    .btn-secondary:hover { background: #d8e3f5; }
+    .btn-sm { padding: 7px 14px; font-size: 13px; }
+    .btn-outline { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
+    .btn-outline:hover { background: var(--accent-light); }
+
+    /* ── Pipeline toggle ── */
+    .mode-toggle {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 5px;
+      gap: 4px;
+      margin-bottom: 22px;
+      box-shadow: var(--shadow);
+    }
+    .mode-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      transition: all 0.18s;
+    }
+    .mode-btn.active { background: var(--accent); color: #fff; box-shadow: 0 2px 8px rgba(29,78,216,0.25); }
+
+    /* ── Results ── */
+    #results { display: none; }
+
+    .result-section {
+      border-left: 4px solid var(--accent);
+      padding: 14px 18px;
+      background: var(--accent-light);
+      border-radius: 0 10px 10px 0;
+      margin-bottom: 14px;
+    }
+    .result-section h4 { font-size: 12px; font-weight: 700; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .result-section p, .result-section li { font-size: 14px; color: var(--text); }
+    .result-section ul { padding-left: 18px; }
+    .result-section ul li { margin-bottom: 5px; }
+
+    /* Explanation text */
+    #adapted-explanation {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--text);
+      white-space: pre-wrap;
+    }
+
+    /* Result card header */
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .result-header-title { font-size: 16px; font-weight: 700; color: var(--granite); display: flex; align-items: center; gap: 8px; }
+
+    /* Level badge */
+    .level-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .level-beginner { background: #dcfce7; color: #15803d; }
+    .level-intermediate { background: #fef9c3; color: #a16207; }
+    .level-advanced { background: #fee2e2; color: #b91c1c; }
+    .level-expert { background: #f3e8ff; color: #7c3aed; }
+
+    /* Quiz */
+    .quiz-card {
+      background: #fafbfe;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 14px;
+    }
+    .quiz-card .q-text { font-weight: 600; margin-bottom: 14px; line-height: 1.5; }
+    .quiz-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      background: #fff;
+      transition: all 0.15s;
+    }
+    .quiz-option:hover { border-color: var(--accent); background: var(--accent-light); }
+    .quiz-option.correct { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+    .quiz-option.wrong { background: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+    .quiz-option .opt-letter {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 12px;
+      flex-shrink: 0;
+    }
+    .quiz-explanation { display: none; margin-top: 10px; font-size: 13px; color: #15803d; padding: 10px 14px; background: #dcfce7; border-radius: 8px; border-left: 3px solid #16a34a; }
+
+    /* Loader */
+    .loader {
+      display: none;
+      text-align: center;
+      padding: 48px;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto 14px;
+    }
+    .loader p { font-size: 14px; color: var(--granite); font-weight: 600; }
+    .loader small { font-size: 12px; color: var(--muted); margin-top: 4px; display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Error */
+    .error-box {
+      display: none;
+      background: #fee2e2;
+      border: 1px solid #fca5a5;
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #b91c1c;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    /* Concepts chips */
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .chip {
+      background: var(--granite-light);
+      color: var(--granite);
+      border: 1px solid #c7d2e8;
+      border-radius: 99px;
+      padding: 4px 13px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    /* Notice */
+    .notice {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #92400e;
+      margin-bottom: 20px;
+    }
+    .notice strong { color: #78350f; }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    @media (max-width: 640px) { .stats-row { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .stat-card .stat-icon { font-size: 22px; margin-bottom: 6px; display: block; }
+    .stat-card .stat-val { font-size: 18px; font-weight: 800; color: var(--accent); line-height: 1.2; }
+    .stat-card .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    /* Divider */
+    .section-divider {
+      display: flex; align-items: center; gap: 12px;
+      margin: 8px 0 18px;
+      color: var(--muted); font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .section-divider::before, .section-divider::after {
+      content: ''; flex: 1; height: 1px; background: var(--border);
+    }
+
+    /* Ethical AI card */
+    .ethical-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1px solid #86efac;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .ethical-icon { font-size: 24px; flex-shrink: 0; }
+    .ethical-body { font-size: 13px; color: #166534; }
+    .ethical-body strong { display: block; font-size: 14px; margin-bottom: 4px; color: #14532d; }
+
+    /* Score banner */
+    #quiz-score {
+      display: none;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--granite-light), #e0e9f8);
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--granite);
+      margin-top: 12px;
+      text-align: center;
+      border: 1px solid #c7d2e8;
+    }
+
+    /* Explanation box */
+    .explanation-box {
+      background: var(--accent-light);
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 24px 20px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+      background: var(--surface);
+    }
+    footer .footer-row { display: flex; align-items: center; justify-content: center; gap: 18px; flex-wrap: wrap; }
+    footer .footer-tag {
+      background: var(--granite-light);
+      color: var(--granite);
+      border-radius: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo-wrap">
+    <div class="logo-icon">🎓</div>
+    <div class="logo-text">
+      <div class="logo">Edu<span>Adapt</span></div>
+      <div class="tagline">AI-Powered Educational Content Adaptation</div>
+    </div>
+  </div>
+  <div class="header-badges">
+    <div class="ibm-badge">IBM Granite · watsonx.ai</div>
+    <div class="ibm-badge ethical">Ethical AI</div>
+  </div>
+</header>
+
+<!-- Hero strip -->
+<div class="hero-strip">
+  <h1>Personalized Learning, Powered by IBM AI</h1>
+  <p>Paste any academic content and EduAdapt re-explains it at your exact knowledge level — from complete beginner to expert researcher.</p>
+  <div class="feature-pills">
+    <span class="feature-pill">4 Proficiency Levels</span>
+    <span class="feature-pill">Auto-Detection Pipeline</span>
+    <span class="feature-pill">Key Concepts Extraction</span>
+    <span class="feature-pill">Real-World Analogies</span>
+    <span class="feature-pill">Comprehension Quizzes</span>
+  </div>
+</div>
+
+<main>
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-icon">🎯</span>
+      <div class="stat-val">4</div>
+      <div class="stat-label">Proficiency Levels</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⚡</span>
+      <div class="stat-val">2</div>
+      <div class="stat-label">Adaptation Modes</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🧪</span>
+      <div class="stat-val">4</div>
+      <div class="stat-label">Quiz Questions</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🤖</span>
+      <div class="stat-val">Granite</div>
+      <div class="stat-label">IBM Foundation Model</div>
+    </div>
+  </div>
+
+  <!-- Demo mode banner (shown dynamically by JS) -->
+  <div id="demo-banner" style="display:none;background:linear-gradient(90deg,#1e3a5f,#1d4ed8);color:#fff;border-radius:10px;padding:13px 18px;margin-bottom:18px;font-size:13px;align-items:center;gap:10px;">
+    <span style="font-size:18px;">🎬</span>
+    <span><strong>Demo Mode Active</strong> — Running with realistic mock responses. Add IBM credentials in <code style="background:rgba(255,255,255,0.15);padding:1px 6px;border-radius:4px;">backend/.env</code> to use live IBM Granite.</span>
+  </div>
+
+  <!-- Config notice (hidden in demo mode) -->
+  <div id="config-notice" class="notice">
+    <strong>⚙️ Setup required:</strong> Add your <code>IBM_API_KEY</code> and <code>IBM_PROJECT_ID</code> in <code>backend/.env</code>, then run <code>python app.py</code>. See <code>backend/.env.example</code>.
+  </div>
+
+  <!-- Mode toggle -->
+  <div class="mode-toggle">
+    <div class="mode-btn active" data-mode="manual" onclick="switchMode('manual')">✏️ Manual Mode — Pick your level</div>
+    <div class="mode-btn" data-mode="pipeline" onclick="switchMode('pipeline')">⚡ Auto-Pipeline — AI detects level</div>
+  </div>
+
+  <!-- ── MANUAL MODE ── -->
+  <div id="manual-mode">
+
+    <div class="card">
+      <div class="card-title">
+        <span class="step-badge">1</span>
+        Select Your Proficiency Level
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px;">Choose the level that best describes your current knowledge of this topic.</p>
+      <div class="level-grid">
+        <div class="level-btn active" data-level="beginner" onclick="selectLevel(this)">
+          <span class="level-icon">🌱</span>
+          <div class="level-name">Beginner</div>
+          <div class="level-desc">No prior knowledge</div>
+        </div>
+        <div class="level-btn" data-level="intermediate" onclick="selectLevel(this)">
+          <span class="level-icon">📚</span>
+          <div class="level-name">Intermediate</div>
+          <div class="level-desc">Some foundations</div>
+        </div>
+        <div class="level-btn" data-level="advanced" onclick="selectLevel(this)">
+          <span class="level-icon">🔬</span>
+          <div class="level-name">Advanced</div>
+          <div class="level-desc">Strong understanding</div>
+        </div>
+        <div class="level-btn" data-level="expert" onclick="selectLevel(this)">
+          <span class="level-icon">🎓</span>
+          <div class="level-name">Expert</div>
+          <div class="level-desc">Researcher / Specialist</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="step-badge">2</span>
+        Paste Academic Content
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>Subject Area <span style="font-weight:400;color:#9ca3af;">(optional)</span></label>
+        <input type="text" id="subject-manual" placeholder="e.g. Quantum Physics, Machine Learning, Organic Chemistry…" />
+      </div>
+      <div>
+        <label>Academic Content to Adapt</label>
+        <textarea id="content-manual" placeholder="Paste your textbook excerpt, lecture notes, research abstract, or any academic content here…"></textarea>
+      </div>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-primary" onclick="adaptContent()">
+          ✨ Adapt with IBM Granite
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="loadSample()">📄 Load Sample</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── AUTO-PIPELINE MODE ── -->
+  <div id="pipeline-mode" style="display:none;">
+    <div class="card">
+      <div class="card-title">
+        <span class="step-badge">1</span>
+        Describe Your Background
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">EduAdapt's AI will automatically detect your proficiency level from your description.</p>
+      <label>Tell us about your experience with this topic</label>
+      <textarea id="user-description" placeholder="e.g. 'I'm a first-year student and have never studied this before' or 'I have 3 years of experience in software development and understand basic algorithms'…" style="min-height:90px;"></textarea>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span class="step-badge">2</span>
+        Paste Academic Content
+      </div>
+      <div style="margin-bottom:14px;">
+        <label>Subject Area <span style="font-weight:400;color:#9ca3af;">(optional)</span></label>
+        <input type="text" id="subject-pipeline" placeholder="e.g. Quantum Physics, Machine Learning…" />
+      </div>
+      <label>Content to Adapt</label>
+      <textarea id="content-pipeline" placeholder="Paste academic content here…"></textarea>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+        <button class="btn btn-primary" onclick="runPipeline()">
+          ⚡ Auto-Assess &amp; Adapt
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="loadSample()">📄 Load Sample</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOADER ── -->
+  <div class="loader" id="loader">
+    <div class="spinner"></div>
+    <p>IBM Granite is thinking…</p>
+    <small>Adapting content via watsonx.ai — this may take a few seconds</small>
+  </div>
+
+  <!-- ── ERROR ── -->
+  <div class="error-box" id="error-box"></div>
+
+  <!-- ── RESULTS ── -->
+  <div id="results">
+
+    <!-- Ethical AI notice -->
+    <div class="ethical-card">
+      <div class="ethical-icon">🛡️</div>
+      <div class="ethical-body">
+        <strong>Responsible AI — Human-in-the-Loop</strong>
+        This adaptation is generated by IBM Granite, an open-source foundation model. Always verify important academic content with authoritative sources. EduAdapt is a learning aid, not a replacement for expert guidance.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="result-header">
+        <div class="result-header-title">
+          ✅ Adapted Explanation
+          <span id="level-badge" class="level-badge"></span>
+        </div>
+        <button class="btn btn-outline btn-sm" style="margin-left:auto;" onclick="generateQuiz()">🧪 Generate Quiz</button>
+      </div>
+
+      <!-- Detected level (pipeline only) -->
+      <div id="pipeline-detection" style="display:none;margin-bottom:16px;padding:12px 16px;background:var(--granite-light);border-radius:8px;font-size:13px;border-left:4px solid var(--accent);">
+        🔍 <strong>Auto-detected proficiency:</strong> <span id="detected-level" style="text-transform:capitalize;font-weight:700;"></span>
+        <span id="detection-confidence" style="color:var(--muted);margin-left:8px;"></span>
+      </div>
+
+      <!-- Main explanation -->
+      <div class="explanation-box">
+        <p id="adapted-explanation"></p>
+      </div>
+
+      <!-- Key concepts -->
+      <div class="result-section" id="concepts-section">
+        <h4>🔑 Key Concepts</h4>
+        <div id="key-concepts" class="chip-row"></div>
+      </div>
+
+      <!-- Analogies -->
+      <div class="result-section" id="analogies-section" style="border-color:#16a34a;background:#f0fdf4;margin-top:12px;">
+        <h4 style="color:#15803d;">💡 Real-World Analogies</h4>
+        <ul id="analogies"></ul>
+      </div>
+
+      <!-- Follow-up questions -->
+      <div class="result-section" id="followup-section" style="border-color:#d97706;background:#fffbeb;margin-top:12px;">
+        <h4 style="color:#92400e;">❓ Explore Further</h4>
+        <ul id="follow-up-questions"></ul>
+      </div>
+    </div>
+
+    <!-- ── QUIZ ── -->
+    <div id="quiz-section" style="display:none;">
+      <div class="card">
+        <div class="card-title">🧪 Comprehension Quiz</div>
+        <p style="font-size:13px;color:var(--muted);margin-bottom:18px;">Test your understanding of the adapted content. Select an answer to see if you're correct.</p>
+        <div id="quiz-container"></div>
+        <div id="quiz-score"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-row">
+    <span>Built with</span>
+    <span class="footer-tag">IBM Granite 13B</span>
+    <span class="footer-tag">watsonx.ai</span>
+    <span class="footer-tag">IBM Cloud Lite</span>
+    <span>·</span>
+    <span>EduAdapt © 2024 · IBM SkillsBuild Submission</span>
+  </div>
+</footer>
+
+<script>
+  // ── State ──
+  const API_BASE = 'http://localhost:5000';
+  let currentMode = 'manual';
+  let selectedLevel = 'beginner';
+  let lastAdaptedContent = '';
+  let quizAnswered = {};
+
+  // ── Auto-detect demo mode on load ──
+  (async function checkMode() {
+    try {
+      const res = await fetch(`${API_BASE}/api/health`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.mode === 'demo') {
+          document.getElementById('demo-banner').style.display = 'flex';
+          document.getElementById('config-notice').style.display = 'none';
+        } else {
+          document.getElementById('config-notice').style.display = 'none';
+        }
+      }
+    } catch (e) {
+      // backend not running — keep config notice visible
+    }
+  })();
+
+  // ── Mode switch ──
+  function switchMode(mode) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+    document.getElementById('manual-mode').style.display = mode === 'manual' ? 'block' : 'none';
+    document.getElementById('pipeline-mode').style.display = mode === 'pipeline' ? 'block' : 'none';
+    hideResults();
+  }
+
+  // ── Level selection ──
+  function selectLevel(el) {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    selectedLevel = el.dataset.level;
+  }
+
+  // ── Helpers ──
+  function showLoader() {
+    document.getElementById('loader').style.display = 'block';
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+  }
+
+  function hideLoader() {
+    document.getElementById('loader').style.display = 'none';
+  }
+
+  function showError(msg) {
+    const box = document.getElementById('error-box');
+    box.textContent = '⚠️ ' + msg;
+    box.style.display = 'block';
+    hideLoader();
+  }
+
+  function hideResults() {
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('quiz-section').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+    quizAnswered = {};
+  }
+
+  // ── Sample content ──
+  function loadSample() {
+    const sample = `In quantum mechanics, wave-particle duality refers to the concept that every particle or quantum entity may be described as either a particle or a wave. This property is demonstrated by phenomena such as electron diffraction and the double-slit experiment. The de Broglie hypothesis states that any moving particle or object has an associated matter wave. The wavelength λ is related to the momentum p of a particle through the equation λ = h/p, where h is Planck's constant. The Heisenberg uncertainty principle further establishes that there is a fundamental limit to the precision with which the position (x) and momentum (p) of a particle can be known simultaneously: Δx · Δp ≥ ℏ/2.`;
+    if (currentMode === 'manual') {
+      document.getElementById('content-manual').value = sample;
+      document.getElementById('subject-manual').value = 'Quantum Physics';
+    } else {
+      document.getElementById('content-pipeline').value = sample;
+      document.getElementById('subject-pipeline').value = 'Quantum Physics';
+    }
+  }
+
+  // ── Render results ──
+  function renderResults(data, pipeline = false) {
+    const level = pipeline ? data.proficiency_detected : selectedLevel;
+
+    const badge = document.getElementById('level-badge');
+    badge.textContent = level.charAt(0).toUpperCase() + level.slice(1);
+    badge.className = `level-badge level-${level}`;
+
+    document.getElementById('adapted-explanation').textContent = data.adapted_explanation || data.explanation || '';
+    lastAdaptedContent = data.adapted_explanation || data.explanation || '';
+
+    const detectionDiv = document.getElementById('pipeline-detection');
+    if (pipeline) {
+      document.getElementById('detected-level').textContent = data.proficiency_detected;
+      document.getElementById('detection-confidence').textContent = `(confidence: ${data.proficiency_confidence || 'medium'})`;
+      detectionDiv.style.display = 'block';
+    } else {
+      detectionDiv.style.display = 'none';
+    }
+
+    // Key concepts
+    const conceptsDiv = document.getElementById('key-concepts');
+    conceptsDiv.innerHTML = '';
+    const concepts = data.key_concepts || [];
+    if (concepts.length) {
+      concepts.forEach(c => {
+        const chip = document.createElement('span');
+        chip.className = 'chip';
+        chip.textContent = c;
+        conceptsDiv.appendChild(chip);
+      });
+      document.getElementById('concepts-section').style.display = 'block';
+    } else {
+      document.getElementById('concepts-section').style.display = 'none';
+    }
+
+    // Analogies
+    const analogiesUl = document.getElementById('analogies');
+    analogiesUl.innerHTML = '';
+    const analogies = data.analogies || [];
+    if (analogies.length) {
+      analogies.forEach(a => {
+        const li = document.createElement('li');
+        li.textContent = a;
+        analogiesUl.appendChild(li);
+      });
+      document.getElementById('analogies-section').style.display = 'block';
+    } else {
+      document.getElementById('analogies-section').style.display = 'none';
+    }
+
+    // Follow-up questions
+    const followUl = document.getElementById('follow-up-questions');
+    followUl.innerHTML = '';
+    const followups = data.follow_up_questions || [];
+    if (followups.length) {
+      followups.forEach(q => {
+        const li = document.createElement('li');
+        li.textContent = q;
+        followUl.appendChild(li);
+      });
+      document.getElementById('followup-section').style.display = 'block';
+    } else {
+      document.getElementById('followup-section').style.display = 'none';
+    }
+
+    document.getElementById('quiz-section').style.display = 'none';
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    quizAnswered = {};
+  }
+
+  // ── Adapt (manual) ──
+  async function adaptContent() {
+    const content = document.getElementById('content-manual').value.trim();
+    const subject = document.getElementById('subject-manual').value.trim();
+    if (!content) { showError('Please paste some academic content first.'); return; }
+
+    showLoader();
+    try {
+      const res = await fetch(`${API_BASE}/api/adapt`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, proficiency: selectedLevel, subject }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Unknown error');
+      hideLoader();
+      renderResults(data, false);
+    } catch (e) {
+      showError(e.message || 'Failed to connect to the backend. Is the server running on localhost:5000?');
+    }
+  }
+
+  // ── Pipeline (auto-assess) ──
+  async function runPipeline() {
+    const content = document.getElementById('content-pipeline').value.trim();
+    const subject = document.getElementById('subject-pipeline').value.trim();
+    const userDescription = document.getElementById('user-description').value.trim();
+    if (!content) { showError('Please paste some academic content first.'); return; }
+
+    showLoader();
+    try {
+      const res = await fetch(`${API_BASE}/api/pipeline`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content, subject, user_description: userDescription }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Unknown error');
+      hideLoader();
+      renderResults(data, true);
+    } catch (e) {
+      showError(e.message || 'Failed to connect to the backend. Is the server running on localhost:5000?');
+    }
+  }
+
+  // ── Generate quiz ──
+  async function generateQuiz() {
+    if (!lastAdaptedContent) return;
+    const level = document.getElementById('level-badge').textContent.toLowerCase();
+
+    document.getElementById('quiz-section').style.display = 'none';
+    const btn = event.target;
+    btn.disabled = true;
+    btn.textContent = '⏳ Generating…';
+
+    try {
+      const res = await fetch(`${API_BASE}/api/quiz`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: lastAdaptedContent, proficiency: level }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Unknown error');
+      renderQuiz(data.quiz || []);
+    } catch (e) {
+      showError(e.message);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '🧪 Generate Quiz';
+    }
+  }
+
+  // ── Render quiz ──
+  function renderQuiz(questions) {
+    if (!questions.length) {
+      document.getElementById('quiz-container').innerHTML = '<p style="color:var(--muted);">No questions could be generated for this content.</p>';
+      document.getElementById('quiz-section').style.display = 'block';
+      return;
+    }
+
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    quizAnswered = {};
+
+    questions.forEach((q, qi) => {
+      const card = document.createElement('div');
+      card.className = 'quiz-card';
+      card.innerHTML = `<div class="q-text">Q${qi + 1}. ${escHtml(q.question)}</div>`;
+
+      const letters = ['A', 'B', 'C', 'D'];
+      (q.options || []).forEach((opt, oi) => {
+        const optDiv = document.createElement('div');
+        optDiv.className = 'quiz-option';
+        optDiv.innerHTML = `<span class="opt-letter">${letters[oi]}</span> ${escHtml(opt)}`;
+        optDiv.onclick = () => handleAnswer(optDiv, letters[oi], q.correct, qi, q.explanation, card);
+        card.appendChild(optDiv);
+      });
+
+      const expDiv = document.createElement('div');
+      expDiv.className = 'quiz-explanation';
+      expDiv.id = `exp-${qi}`;
+      expDiv.textContent = q.explanation || '';
+      card.appendChild(expDiv);
+
+      container.appendChild(card);
+    });
+
+    document.getElementById('quiz-score').style.display = 'none';
+    document.getElementById('quiz-section').style.display = 'block';
+    document.getElementById('quiz-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function handleAnswer(optDiv, chosen, correct, qi, explanation, card) {
+    if (quizAnswered[qi]) return;
+    quizAnswered[qi] = chosen;
+
+    const isCorrect = chosen === correct;
+    optDiv.classList.add(isCorrect ? 'correct' : 'wrong');
+
+    if (!isCorrect) {
+      card.querySelectorAll('.quiz-option').forEach((o, idx) => {
+        if (['A','B','C','D'][idx] === correct) o.classList.add('correct');
+      });
+    }
+
+    const expEl = document.getElementById(`exp-${qi}`);
+    if (expEl) expEl.style.display = 'block';
+
+    const totalQs = document.querySelectorAll('.quiz-card').length;
+    if (Object.keys(quizAnswered).length === totalQs) {
+      const correctCount = document.querySelectorAll('.quiz-option.correct:not(.wrong ~ .correct)').length;
+      const allCorrect = document.querySelectorAll('.quiz-card').length;
+      let score = 0;
+      document.querySelectorAll('.quiz-card').forEach((c, i) => {
+        const chosen = quizAnswered[i];
+        // count via answered map
+      });
+      // Simple correct count via DOM
+      let finalScore = 0;
+      Object.keys(quizAnswered).forEach((i) => {
+        const card = document.querySelectorAll('.quiz-card')[i];
+        if (card && card.querySelector('.quiz-option.correct')) finalScore++;
+      });
+      const scoreDiv = document.getElementById('quiz-score');
+      const emoji = finalScore === totalQs ? '🏆' : finalScore >= totalQs / 2 ? '👍' : '📖';
+      scoreDiv.textContent = `${emoji} Quiz Complete! You got ${finalScore}/${totalQs} correct.`;
+      scoreDiv.style.display = 'block';
+    }
+  }
+
+  function escHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+</script>
+
+</body>
+</html>
