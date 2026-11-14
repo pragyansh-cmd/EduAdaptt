@@ -2,14 +2,12 @@ services:
   - type: web
     name: eduadapt-ibm-backend
     runtime: python
-    buildCommand: pip install -r backend/requirements.txt
-    startCommand: gunicorn backend.app:app
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
     envVars:
       - key: IBM_API_KEY
         sync: false
       - key: IBM_PROJECT_ID
         sync: false
       - key: IBM_URL
-        sync: false
-      - key: IBM_MODEL_ID
-        value: ibm/granite-3-8b-instruct
+        value: https://eu-de.ml.cloud.ibm.com
