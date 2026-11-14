@@ -12,7 +12,8 @@ IBM_URL = os.getenv('IBM_URL', '').rstrip('/')
 MODEL_ID = os.getenv('IBM_MODEL_ID', 'ibm/granite-3-8b-instruct')
 
 @app.get('/')
-def home(): return send_from_directory(ROOT, 'index.html')
+def home():
+    return app.send_static_file('index.html')
 
 @app.get('/api/health')
 def health():
